@@ -1,9 +1,6 @@
 ---
 - name: Create a MediaGoblin instance
   hosts: all
-  become: yes
-  become_user: root
-  remote_user: vagrant
   gather_facts: no
   pre_tasks:
       - name: Install Python2
@@ -36,3 +33,18 @@
             - nodejs
             - npm
             - nodejs-legacy
+
+      - name: Clone the GNU MediaGoblin repo
+        git: repo=git://git.savannah.gnu.org/mediagoblin.git dest=/home/ubuntu/mediagoblin
+
+      - name: Configure the environment
+        command: bash -c "cd /home/ubuntu/mediagoblin && ./configure"
+
+      - name: Configure the environment
+        command: bash -c "cd /home/ubuntu/mediagoblin && make"
+
+      - name: Init the database
+        command: bash -c "cd /home/ubuntu/mediagoblin && ./bin/gmg dbupdate"
+
+      - name: Verify through running testsuite
+        command: bash -c "cd /home/ubuntu/mediagoblin && ./runtests.sh"
