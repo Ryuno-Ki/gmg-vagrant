@@ -1,0 +1,38 @@
+---
+- name: Create a MediaGoblin instance
+  hosts: all
+  become: yes
+  become_user: root
+  remote_user: vagrant
+  gather_facts: no
+  pre_tasks:
+      - name: Install Python2
+        raw: sudo apt-get install -y python2.7
+
+      - name: Alias /usr/bin/python
+        raw: sudo ln -fs /usr/bin/python2.7 /usr/bin/python
+
+  tasks:
+      # - name: Upgrade packages
+      #   apt: upgrade=dist
+
+      # - name: Clean up apt-list
+      #   file:
+      #       path: "/var/lib/apt/lists/*"
+      #       state: absent
+
+      - name: Ensure the repo is up-to-date
+        apt: update_cache=yes
+      - name: Install requirements
+        apt: name={{item}} state=present
+        with_items:
+            - git-core
+            - python-lxml
+            - python-imaging
+            - python-virtualenv
+            - python-gst-1.0
+            - libjpeg8-dev
+            - autoconf
+            - nodejs
+            - npm
+            - nodejs-legacy
